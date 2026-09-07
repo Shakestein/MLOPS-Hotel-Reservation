@@ -33,27 +33,27 @@ pipeline{
 
         stage('Building and pushing Docker image to GCR'){
             steps{
-                withCredentials([file(credentialsId:'gcp-key', variable : 'GOOGLE_AAPLICATION_CREDENTIALS')]){
+                // Corrected spelling to GOOGLE_APPLICATION_CREDENTIALS
+                withCredentials([file(credentialsId:'gcp-key', variable : 'GOOGLE_APPLICATION_CREDENTIALS')]){
                     script{
                         echo 'Building and pushing Docker image to GCR...............'
                         sh '''
-                        export PATH=$PATH:$(GCLOUD_PATH)
+                        # Changed () to {}
+                        export PATH=$PATH:${GCLOUD_PATH}
 
-                        gcloud auth activate-service-account --key-file=${GOOGE_APPLICATION_CREDENTIALS}
+                        # Corrected spelling to match the withCredentials variable
+                        gcloud auth activate-service-account --key-file=${GOOGLE_APPLICATION_CREDENTIALS}
 
                         gcloud config set project ${GCP_PROJECT}
 
                         gcloud auth configure-docker --quiet
 
-                        docker build-t gcr.io/${GCP_PROJECT}/ml-project:latest .
+                        # Added the missing space before -t
+                        docker build -t gcr.io/${GCP_PROJECT}/ml-project:latest .
                         docker push gcr.io/${GCP_PROJECT}/ml-project:latest 
-
-
                         '''
                     }
                 }
-
-                
             }
         }
     }
